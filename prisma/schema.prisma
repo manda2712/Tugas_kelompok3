@@ -1,4 +1,3 @@
-// This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
@@ -16,15 +15,14 @@ datasource db {
 // Define the User model with roles for PH Operator and WH Operator
 model User {
   id        Int      @id @default(autoincrement())
-  username  String
+  username  String   @unique
   email     String   @unique
   password  String
-  role      Role
-  jwt_token String?
+  role      Role @default(WH_OPERATOR)
+  orderspkId Order_spk?
+  createdAt DateTime @default(now())
+  update_at DateTime @updatedAt
   
-  // Relasi one-to-one ke PHOperator dan WHOperator
-  PHOperator PHOperator? @relation("UserToPHOperator")
-  WHOperator WHOperator? @relation("UserToWHOperator")
 }
 
 // Define enum for Role
@@ -33,76 +31,30 @@ enum Role {
   WH_OPERATOR
 }
 
-model PHOperator {
-  id         Int          @id @default(autoincrement())
-  user       User         @relation(fields: [userId], references: [id], name: "UserToPHOperator")
-  userId     Int          @unique
-  orders     Order[]
-  notifications Notification[] @relation("PHOperatorNotifications")
-}
-
-model WHOperator {
-  id         Int          @id @default(autoincrement())
-  user       User         @relation(fields: [userId], references: [id], name: "UserToWHOperator")
-  userId     Int          @unique
-  materials  Material[]
-  orders     Order[]
-  notifications Notification[] @relation("WHOperatorNotifications")
-}
 
 // Define Material managed by WH Operators
 model Material {
   id            Int        @id @default(autoincrement())
   name          String
-  status        MaterialStatus
-  whOperator    WHOperator @relation(fields: [whOperatorId], references: [id])
-  whOperatorId  Int
-}
-
-enum MaterialStatus {
-  OFF
-  FREE
-  ON_DUTY
+  description   String
+  stock         Int
+  created_at    DateTime @default(now())
+  update_at     DateTime @updatedAt
 }
 
 // Define Order (SPK) managed by both PH and WH Operators
-model Order {
+model Order_spk {
   id             Int        @id @default(autoincrement())
+  userId      Int @unique
+  order_qty      Int
   status         OrderStatus
-  warehouseStatus WarehouseStatus
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
-  phOperator     PHOperator @relation(fields: [phOperatorId], references: [id])
-  phOperatorId   Int
-  whOperator     WHOperator @relation(fields: [whOperatorId], references: [id])
-  whOperatorId   Int
+  user           User       @relation(fields: [userId], references: [id])
 }
 
 enum OrderStatus {
   PENDING
   ON_PROCESS
   DONE
-}
-
-enum WarehouseStatus {
-  OFF
-  FREE
-  ON_DUTY
-}
-
-// Define Notification model (optional)
-model Notification {
-  id            Int          @id @default(autoincrement())
-  message       String
-  status        NotificationStatus
-  createdAt     DateTime     @default(now())
-  phOperator    PHOperator   @relation(fields: [phOperatorId], references: [id], name: "PHOperatorNotifications")
-  phOperatorId  Int
-  whOperator    WHOperator   @relation(fields: [whOperatorId], references: [id], name: "WHOperatorNotifications")
-  whOperatorId  Int
-}
-
-enum NotificationStatus {
-  SENT
-  READ
 }
