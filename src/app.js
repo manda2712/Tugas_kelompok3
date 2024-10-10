@@ -15,6 +15,9 @@ app.get("/", (req, res) => {
 const authController = require("./auth/auth.controller");
 app.use("/api/auth", authController);
 
+const userController = require("./user/user.controller");
+app.use("/api/users", userController);
+
 app.listen(PORT, () => {
     console.log(`App listening on port ` + PORT);
 });
