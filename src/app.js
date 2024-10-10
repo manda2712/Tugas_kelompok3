@@ -21,6 +21,9 @@ app.use("/api/users", userController);
 const materialController = require("./material/material.controller")
 app.use("/api/material", materialController);
 
+const orderController = require("./order/order.controller")
+app.use("/api/orders", orderController)
+
 app.listen(PORT, () => {
     console.log(`App listening on port ` + PORT);
 });
