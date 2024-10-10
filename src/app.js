@@ -18,6 +18,9 @@ app.use("/api/auth", authController);
 const userController = require("./user/user.controller");
 app.use("/api/users", userController);
 
+const materialController = require("./material/material.controller")
+app.use("/api/material", materialController);
+
 app.listen(PORT, () => {
     console.log(`App listening on port ` + PORT);
 });
