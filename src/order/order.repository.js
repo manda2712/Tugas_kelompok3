@@ -57,15 +57,32 @@ async function findOrderByUserId(userId) {
 async function findOrderById(id) {
     const order = await prisma.order_spk.findUnique({
         where:{
-            id: parent(id)
+            id: parseInt(id)
         }
     })
     return order  
+}
+
+async function updateOrderStatus(orderId, status) {
+    try {
+        await prisma.order_spk.update({
+            where: {
+                id: parseInt(orderId)
+            },
+            data: {
+                status: status  // Update status saja
+            }
+        });
+    } catch (error) {
+        console.error("Error details:", error);  // Tambahkan logging untuk detail error
+        throw new Error("Failed to update your status");
+    }   
 }
 
 module.exports ={
     createOrder,
     findOrder,
     findOrderByUserId,
-    findOrderById
+    findOrderById,
+    updateOrderStatus
 }

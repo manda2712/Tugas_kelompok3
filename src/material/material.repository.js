@@ -44,6 +44,17 @@ async function deleteMaterial(id) {
         where: {
             id: parseInt(id)
         }
+    })  
+}
+
+async function updatematerial(materialId, newStock) {
+    await prisma.material.update({
+        where:{
+            id: parseInt(materialId)
+        },
+        data:{
+            stock : newStock
+        }
     })
     
 }
@@ -53,5 +64,6 @@ module.exports = {
     findMaterials,
     findMaterialsById,
     editMaterial,
-    deleteMaterial
+    deleteMaterial,
+    updatematerial
 }
