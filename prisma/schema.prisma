@@ -19,7 +19,7 @@ model User {
   email     String   @unique
   password  String
   role      Role @default(WH_OPERATOR)
-  orderspkId Order_spk?
+  orderspkId Order_spk[]
   createdAt DateTime @default(now())
   update_at DateTime @updatedAt
   
@@ -38,7 +38,7 @@ model Material {
   name          String
   description   String
   stock         Int
-  orderspkId Order_spk?
+  orderspkId Order_spk[]
   created_at    DateTime @default(now())
   update_at     DateTime @updatedAt
 }
@@ -46,8 +46,8 @@ model Material {
 // Define Order (SPK) managed by both PH and WH Operators
 model Order_spk {
   id             Int        @id @default(autoincrement())
-  userId      Int @unique
-  materialId Int @unique
+  userId      Int 
+  materialId Int 
   orderQty      Int
   status         OrderStatus
   createdAt      DateTime   @default(now())
