@@ -2,10 +2,13 @@ const express = require ("express");
 const router = express.Router();
 const orderService = require("./order.service");
 const { getMaterialById } = require("../material/material.service");
+const authorizeJWT = require("../middleware/authorizeJWT");
+const whAuthorization = require("../middleware/whAuthorization");
 
-router.post("/order", async (req, res) => {
+router.post("/order", authorizeJWT, async (req, res) => {
     try {
-        const {userId, materialId, orderQty} = req.body
+        const userId = req.userId;
+        const {materialId, orderQty} = req.body
         const newOrder = await orderService.orderMaterial(userId, materialId, orderQty);
         res.status(201).json(newOrder);
     } catch (error) {
@@ -14,7 +17,7 @@ router.post("/order", async (req, res) => {
     } 
 })
 
-router.get("/", async (req, res) => {
+router.get("/", whAuthorization, async (req, res) => {
     try {
         const order = await orderService.getAllOrder();
         res.send(order) 
@@ -23,8 +26,8 @@ router.get("/", async (req, res) => {
     }  
 });
 
-router.get("/user", async (req, res) => {
-    const {userId} = req.body;
+router.get("/user", authorizeJWT, async (req, res) => {
+    const userId = req.userId;
     try {
         const order = await orderService.getOrderByUserId(userId);
         res.status(200).send(order)
@@ -33,7 +36,7 @@ router.get("/user", async (req, res) => {
     }
 })
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", whAuthorization, async (req, res) => {
     try {
         const orderId = req.params.id
         const order = await getOrderById(orderId)
@@ -43,7 +46,7 @@ router.get("/:id", async (req, res) => {
     } 
 })
 
-router.patch("/verify/:orderId", async (req, res) => {
+router.patch("/verify/:orderId", whAuthorization, async (req, res) => {
     try {
         const { orderId } = req.params;
         const {status} = req.body
